@@ -1,0 +1,2545 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#EAECE6">
+<title>Questionnaire · AuSuivant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================================
+     AuSuivant — Design token layer (light only)
+
+     Deduced from the Dashboard Médecin spec (apps/web/src/components/ausuivant/
+     ReceptionistDashboardV2.tsx). Token variable names remain in the MD3 space
+     to preserve component integration points, but their *values* are the
+     AuSuivant dashboard palette — forest, teal, sage-grey, warm neutrals.
+
+     Dashboard brand palette (single source of truth):
+       forest           #1B2D25   dark text + primary CTA
+       teal             #356B58   brand accent + highlight
+       tealHover        #4A8F75
+       pageBg           #EAECE6   warm sage-grey app background
+       cardBg           #FFFFFF   white card surface
+       cardBgNotified   #F0F8F4   pale green "selected" surface
+       inputBg          #F5F6F3   input field background
+       borderDefault    #E0E5E0
+       badgeGreenBg     #ddeee7
+       badgeRdvBg       #EEE9FA
+       badgeUrgentBg    #FEF3E8
+       badgeRemoveBg    #FEEEEE
+       badgeLinkBg      #E8F4EF
+       statusGreen      #50B878
+       statusOrange     #E8913A
+       statusRed        #E05555
+       statusPurple     #7860C0
+       textPrimary      #1B2D25
+       textSecondary    #6B7A72
+       divider          #E5E9E5
+     ============================================================================ */
+  :root {
+    color-scheme: light only;
+
+    /* ---------- Raw brand palette (for direct reference) ---------- */
+    --aus-forest:           #1B2D25;
+    --aus-teal:             #356B58;
+    --aus-teal-hover:       #4A8F75;
+    --aus-page-bg:          #EAECE6;
+    --aus-card-bg:          #FFFFFF;
+    --aus-card-bg-notified: #F0F8F4;
+    --aus-input-bg:         #F5F6F3;
+    --aus-border:           #E0E5E0;
+    --aus-divider:          #E5E9E5;
+    --aus-text-primary:     #1B2D25;
+    --aus-text-secondary:   #6B7A72;
+    --aus-badge-green:      #ddeee7;
+    --aus-badge-rdv:        #EEE9FA;
+    --aus-badge-urgent:     #FEF3E8;
+    --aus-badge-remove:     #FEEEEE;
+    --aus-badge-link:       #E8F4EF;
+    --aus-status-green:     #50B878;
+    --aus-status-orange:    #E8913A;
+    --aus-status-red:       #E05555;
+    --aus-status-purple:    #7860C0;
+
+    /* ---------- Role mappings (used by component CSS below) ---------- */
+    /* Primary = forest (the dashboard primary CTA colour is forest, not teal) */
+    --md-sys-color-primary: var(--aus-forest);
+    --md-sys-color-on-primary: #FFFFFF;
+    /* Primary container = pale green "notified" surface (used for selected rows) */
+    --md-sys-color-primary-container: var(--aus-card-bg-notified);
+    --md-sys-color-on-primary-container: var(--aus-text-primary);
+
+    /* Secondary = teal (used for accent decorations) */
+    --md-sys-color-secondary: var(--aus-teal);
+    --md-sys-color-on-secondary: #FFFFFF;
+    --md-sys-color-secondary-container: var(--aus-badge-link);
+    --md-sys-color-on-secondary-container: var(--aus-teal);
+
+    /* Tertiary = warm secondary grey (for kickers, section labels) */
+    --md-sys-color-tertiary: var(--aus-text-secondary);
+    --md-sys-color-on-tertiary: #FFFFFF;
+    --md-sys-color-tertiary-container: var(--aus-badge-green);
+    --md-sys-color-on-tertiary-container: var(--aus-teal);
+
+    /* Error scale */
+    --md-sys-color-error: var(--aus-status-red);
+    --md-sys-color-on-error: #FFFFFF;
+    --md-sys-color-error-container: var(--aus-badge-remove);
+    --md-sys-color-on-error-container: var(--aus-status-red);
+
+    /* Neutral surfaces */
+    --md-sys-color-background: var(--aus-page-bg);
+    --md-sys-color-on-background: var(--aus-text-primary);
+    --md-sys-color-surface: var(--aus-page-bg);
+    --md-sys-color-on-surface: var(--aus-text-primary);
+    --md-sys-color-surface-variant: var(--aus-border);
+    --md-sys-color-on-surface-variant: var(--aus-text-secondary);
+    --md-sys-color-outline: var(--aus-border);
+    --md-sys-color-outline-variant: var(--aus-divider);
+    --md-sys-color-scrim: #000000;
+    --md-sys-color-shadow: #000000;
+
+    /* Surface container tonal levels
+       Lowest = pure white for cards; other levels are warmer sage neutrals */
+    --md-sys-color-surface-container-lowest: var(--aus-card-bg);
+    --md-sys-color-surface-container-low: var(--aus-input-bg);
+    --md-sys-color-surface-container: var(--aus-page-bg);
+    --md-sys-color-surface-container-high: #E4E6DF;
+    --md-sys-color-surface-container-highest: #DEE1D9;
+
+    --md-sys-color-inverse-surface: var(--aus-forest);
+    --md-sys-color-inverse-on-surface: #FFFFFF;
+    --md-sys-color-inverse-primary: var(--aus-teal-hover);
+
+    /* ---------- Elevation — dashboard uses flat cards; we keep MD3 shadows
+                  only for interactive feedback (buttons on hover) ---------- */
+    --md-sys-elevation-level0: none;
+    --md-sys-elevation-level1:
+      0px 1px 2px 0px rgba(27, 45, 37, 0.08),
+      0px 1px 3px 1px rgba(27, 45, 37, 0.04);
+    --md-sys-elevation-level2:
+      0px 1px 2px 0px rgba(27, 45, 37, 0.10),
+      0px 2px 6px 2px rgba(27, 45, 37, 0.06);
+    --md-sys-elevation-level3:
+      0px 4px 8px 3px rgba(27, 45, 37, 0.08),
+      0px 1px 3px 0px rgba(27, 45, 37, 0.12);
+    --md-sys-elevation-level4:
+      0px 6px 10px 4px rgba(27, 45, 37, 0.08),
+      0px 2px 3px 0px rgba(27, 45, 37, 0.12);
+    --md-sys-elevation-level5:
+      0px 8px 12px 6px rgba(27, 45, 37, 0.10),
+      0px 4px 4px 0px rgba(27, 45, 37, 0.14);
+
+    /* ---------- Shape — tuned to dashboard values (14–18px for cards,
+                  11–16px for buttons, 20px for pills) ---------- */
+    --md-sys-shape-corner-none: 0px;
+    --md-sys-shape-corner-extra-small: 6px;
+    --md-sys-shape-corner-small: 9px;
+    --md-sys-shape-corner-medium: 11px;
+    --md-sys-shape-corner-large: 14px;
+    --md-sys-shape-corner-extra-large: 18px;
+    --md-sys-shape-corner-full: 9999px;
+
+    /* ---------- Motion — dashboard uses short, punchy easings ---------- */
+    --md-sys-motion-easing-linear: cubic-bezier(0, 0, 1, 1);
+    --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+    --md-sys-motion-easing-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
+    --md-sys-motion-easing-standard-decelerate: cubic-bezier(0, 0, 0, 1);
+    --md-sys-motion-easing-emphasized: cubic-bezier(0.32, 0.72, 0, 1);
+    --md-sys-motion-easing-emphasized-decelerate: cubic-bezier(0.32, 0.72, 0, 1);
+    --md-sys-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+
+    /* Duration tokens — dashboard: 0.1s press, 0.15s state, 0.2-0.3s sheet */
+    --md-sys-motion-duration-short1: 50ms;
+    --md-sys-motion-duration-short2: 100ms;
+    --md-sys-motion-duration-short3: 150ms;
+    --md-sys-motion-duration-short4: 200ms;
+    --md-sys-motion-duration-medium1: 250ms;
+    --md-sys-motion-duration-medium2: 300ms;
+    --md-sys-motion-duration-medium3: 350ms;
+    --md-sys-motion-duration-medium4: 400ms;
+    --md-sys-motion-duration-long1: 450ms;
+    --md-sys-motion-duration-long2: 500ms;
+
+    /* State-layer opacities — slightly lower than MD3 defaults
+       because the dashboard palette is already low-contrast */
+    --md-sys-state-hover-opacity: 0.06;
+    --md-sys-state-focus-opacity: 0.10;
+    --md-sys-state-pressed-opacity: 0.10;
+    --md-sys-state-dragged-opacity: 0.16;
+  }
+
+  /* ============================================================================
+     Global reset + base — DM Sans body, DM Mono for numerics
+     ============================================================================ */
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--md-sys-color-background);
+    color: var(--md-sys-color-on-background);
+    font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* Numeric utility — applied to counters, stats, tabular numerals */
+  .aus-numeric {
+    font-family: "DM Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  button, input, textarea, select {
+    font-family: inherit;
+    color: inherit;
+  }
+
+  button { cursor: pointer; border: none; background: none; }
+
+  /* Screen reader only utility */
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0);
+    white-space: nowrap; border: 0;
+  }
+
+  /* Focus indicator — MD3 uses a 3dp ring with surface-color inner gap */
+  :focus-visible {
+    outline: 3px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
+    border-radius: var(--md-sys-shape-corner-extra-small);
+  }
+
+  /* ============================================================================
+     MD3 TYPOGRAPHY — Type scale tokens
+     Reference: https://m3.material.io/styles/typography/type-scale-tokens
+
+     DASHBOARD ADAPTATION: the AuSuivant dashboard does not use a serif display
+     face. All UI text is DM Sans. Displays and headlines therefore use DM Sans
+     with heavier weight (700) and negative letter-spacing (-0.01em to -0.02em)
+     to recover the expressive quality that would otherwise come from a serif.
+     ============================================================================ */
+
+  /* Display Large — used sparingly for hero moments */
+  .md-display-large {
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-size: 3.5625rem;
+    line-height: 1.12;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--aus-text-primary);
+  }
+
+  /* Display Medium */
+  .md-display-medium {
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-size: 2.8125rem;
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--aus-text-primary);
+  }
+
+  /* Display Small */
+  .md-display-small {
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-size: 2.25rem;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--aus-text-primary);
+  }
+
+  /* Headline Large */
+  .md-headline-large {
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-size: 2rem;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--aus-text-primary);
+  }
+
+  /* Headline Medium */
+  .md-headline-medium {
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-size: 1.75rem;
+    line-height: 1.22;
+    font-weight: 700;
+    letter-spacing: -0.018em;
+    color: var(--aus-text-primary);
+  }
+
+  /* Headline Small */
+  .md-headline-small {
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-size: 1.5rem;
+    line-height: 1.25;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--aus-text-primary);
+  }
+
+  /* Title Large — top app bar title */
+  .md-title-large {
+    font-size: 1.375rem;   /* 22sp */
+    line-height: 1.75rem;  /* 28sp */
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  /* Title Medium — card titles */
+  .md-title-medium {
+    font-size: 1rem;       /* 16sp */
+    line-height: 1.5rem;   /* 24sp */
+    font-weight: 500;
+    letter-spacing: 0.009375rem; /* 0.15sp */
+  }
+
+  /* Title Small */
+  .md-title-small {
+    font-size: 0.875rem;   /* 14sp */
+    line-height: 1.25rem;  /* 20sp */
+    font-weight: 500;
+    letter-spacing: 0.00625rem;
+  }
+
+  /* Body Large */
+  .md-body-large {
+    font-size: 1rem;       /* 16sp */
+    line-height: 1.5rem;   /* 24sp */
+    font-weight: 400;
+    letter-spacing: 0.03125rem; /* 0.5sp */
+  }
+
+  /* Body Medium */
+  .md-body-medium {
+    font-size: 0.875rem;   /* 14sp */
+    line-height: 1.25rem;  /* 20sp */
+    font-weight: 400;
+    letter-spacing: 0.015625rem; /* 0.25sp */
+  }
+
+  /* Body Small */
+  .md-body-small {
+    font-size: 0.75rem;    /* 12sp */
+    line-height: 1rem;     /* 16sp */
+    font-weight: 400;
+    letter-spacing: 0.025rem; /* 0.4sp */
+  }
+
+  /* Label Large — primary button label */
+  .md-label-large {
+    font-size: 0.875rem;   /* 14sp */
+    line-height: 1.25rem;  /* 20sp */
+    font-weight: 500;
+    letter-spacing: 0.00625rem; /* 0.1sp */
+  }
+
+  /* Label Medium */
+  .md-label-medium {
+    font-size: 0.75rem;    /* 12sp */
+    line-height: 1rem;     /* 16sp */
+    font-weight: 500;
+    letter-spacing: 0.03125rem; /* 0.5sp */
+  }
+
+  /* Label Small */
+  .md-label-small {
+    font-size: 0.6875rem;  /* 11sp */
+    line-height: 1rem;     /* 16sp */
+    font-weight: 500;
+    letter-spacing: 0.03125rem; /* 0.5sp */
+  }
+
+  /* ============================================================================
+     MD3 COMPONENT — Top App Bar (Small, default)
+     Reference: https://m3.material.io/components/top-app-bar/specs
+     Spec: 64dp height, 16dp horizontal padding, title at Title Large
+     ============================================================================ */
+  .md-top-app-bar {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    min-height: 64px;
+    padding: 8px 4px 8px 16px;
+    padding-top: calc(8px + env(safe-area-inset-top));
+    background: var(--aus-page-bg);
+    color: var(--aus-text-primary);
+    transition:
+      background var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+      border-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+    border-bottom: 1px solid transparent;
+  }
+
+  /* Scrolled state — subtle divider line (dashboard never changes header bg,
+     only relies on a hairline to separate content below) */
+  .md-top-app-bar[data-scrolled="true"] {
+    border-bottom-color: var(--aus-divider);
+  }
+
+  .md-top-app-bar__leading {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--md-sys-shape-corner-small); /* 9px, dashboard square-ish */
+    background: var(--aus-forest);
+    color: #FFFFFF;
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: -0.02em;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+
+  .md-top-app-bar__title {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    color: var(--aus-text-primary);
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.125rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ============================================================================
+     Layout — responsive container
+     ============================================================================ */
+  main {
+    flex: 1;
+    width: 100%;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  /* ============================================================================
+     Screen transitions
+     Shared enter animation for all three screens
+     ============================================================================ */
+  .screen {
+    display: none;
+    animation: screen-enter var(--md-sys-motion-duration-long2) var(--md-sys-motion-easing-emphasized-decelerate);
+  }
+
+  .screen[data-active="true"] {
+    display: block;
+  }
+
+  @keyframes screen-enter {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .screen { animation: none; }
+    *, *::before, *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+
+  /* ============================================================================
+     SCREEN 1 — COVER (Variant 3 · L'architecte invisible)
+     Design goal: positions the recipient as the expert orchestrator of the cabinet.
+     Stats build credibility; the primary-container card introduces AuSuivant.
+     ============================================================================ */
+  .cover-hero {
+    padding: 32px 0 24px;
+    position: relative;
+  }
+
+  /* Soft radial glow in top-right corner — signals "special" without being loud */
+  .cover-hero::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -80px;
+    width: 240px;
+    height: 240px;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--md-sys-color-primary) 14%, transparent) 0%,
+      transparent 60%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .cover-hero > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Cover badge — tinted pill using dashboard badgeGreenBg */
+  .cover-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 30px;
+    padding: 0 14px 0 7px;
+    background: var(--aus-badge-green);
+    color: var(--aus-teal);
+    border-radius: var(--md-sys-shape-corner-full); /* pill */
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin-bottom: 24px;
+  }
+
+  .cover-badge__icon {
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--aus-teal);
+    color: #FFFFFF;
+    font-size: 0.625rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .cover-title {
+    margin: 0 0 16px;
+    font-size: clamp(2rem, 7vw, 2.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--md-sys-color-on-surface);
+  }
+
+  .cover-title em {
+    font-style: italic;
+    color: var(--aus-teal);
+    font-weight: 700;
+  }
+
+  .cover-lede {
+    margin: 0 0 24px;
+    color: var(--md-sys-color-on-surface-variant);
+    max-width: 52ch;
+  }
+
+  /* Stats block — 2×2 grid of numeric recognition */
+  .cover-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 16px;
+    margin: 0 0 8px;
+    background: var(--md-sys-color-surface-container-low);
+    border-radius: var(--md-sys-shape-corner-large);
+  }
+
+  .cover-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 6px;
+    text-align: center;
+    gap: 6px;
+  }
+
+  .cover-stat__value {
+    font-family: "DM Mono", ui-monospace, monospace;
+    font-size: 1.75rem;
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--aus-teal);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cover-stat__label {
+    color: var(--md-sys-color-on-surface-variant);
+    max-width: 16ch;
+  }
+
+  .cover-stats-caption {
+    text-align: center;
+    color: var(--md-sys-color-on-surface-variant);
+    font-style: italic;
+    margin: 0 0 24px;
+  }
+
+  /* AuSuivant intro card — filled primary-container variant */
+  .cover-intro-card {
+    padding: 20px;
+    margin: 0 0 16px;
+    background: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+    border-radius: var(--md-sys-shape-corner-large);
+  }
+
+  .cover-intro-card__label {
+    margin: 0 0 6px;
+    color: var(--md-sys-color-on-primary-container);
+    opacity: 0.85;
+    text-transform: uppercase;
+  }
+
+  .cover-intro-card__name {
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-size: 1.375rem;
+    font-weight: 700;
+    margin: 0 0 8px;
+    letter-spacing: -0.015em;
+    color: var(--md-sys-color-on-primary-container);
+  }
+
+  .cover-intro-card__body {
+    margin: 0;
+    color: var(--md-sys-color-on-primary-container);
+    opacity: 0.92;
+  }
+
+  /* Reframe block */
+  .cover-reframe {
+    padding: 0;
+    margin: 0 0 24px;
+  }
+
+  .cover-reframe__kicker {
+    margin: 0 0 10px;
+    color: var(--md-sys-color-on-surface-variant);
+    text-transform: uppercase;
+  }
+
+  .cover-reframe__text {
+    margin: 0;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  .cover-reframe__text strong {
+    color: var(--md-sys-color-on-surface);
+    font-weight: 500;
+  }
+
+  /* CTA region */
+  .cover-cta {
+    padding: 8px 0 24px;
+  }
+
+  .cover-cta__prompt {
+    text-align: center;
+    margin: 0 0 14px;
+    color: var(--aus-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+  }
+
+  .cover-role-picker {
+    display: grid;
+    gap: 10px;
+  }
+
+  .cover-cta__caption {
+    margin: 16px 0 0;
+    text-align: center;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  /* ============================================================================
+     BUTTON — Primary CTA (forest), tonal, and text variants.
+     Dashboard language: square-ish radius (not pill), weight 700, scale(0.97)
+     physical press feedback rather than MD3 state-layer overlays. Hover shifts
+     the background to teal (not a shadow).
+     ============================================================================ */
+  .md-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 52px;
+    min-width: 48px;
+    padding: 0 24px;
+    border-radius: var(--md-sys-shape-corner-large); /* 14px */
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 0.9375rem; /* 15px, matches dashboard CTA */
+    letter-spacing: 0;
+    overflow: hidden;
+    transition:
+      background var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+      transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+    white-space: nowrap;
+  }
+
+  .md-button:active {
+    transform: scale(0.97); /* dashboard physical press */
+  }
+
+  /* Filled variant — forest CTA (dashboard primary action) */
+  .md-button--filled {
+    background: var(--aus-forest);
+    color: #FFFFFF;
+  }
+
+  .md-button--filled:hover {
+    background: var(--aus-teal); /* dashboard hover pattern */
+  }
+
+  /* Filled disabled state */
+  .md-button--filled:disabled {
+    background: color-mix(in srgb, var(--aus-forest) 18%, var(--aus-page-bg));
+    color: color-mix(in srgb, var(--aus-text-primary) 38%, transparent);
+    cursor: not-allowed;
+  }
+
+  /* Tonal variant — sage-green tint (dashboard badgeLinkBg) for soft secondary */
+  .md-button--tonal {
+    background: var(--aus-badge-link);
+    color: var(--aus-teal);
+    font-weight: 600;
+  }
+  .md-button--tonal:hover {
+    background: var(--aus-badge-green);
+  }
+
+  /* Text variant — "Non merci" style, no fill */
+  .md-button--text {
+    padding: 0 16px;
+    color: var(--aus-text-secondary);
+    font-weight: 600;
+    background: transparent;
+  }
+  .md-button--text:hover {
+    color: var(--aus-text-primary);
+  }
+
+  /* Full-width modifier */
+  .md-button--block {
+    width: 100%;
+  }
+
+  /* ============================================================================
+     MD3 COMPONENT — Linear Progress Indicator
+     Reference: https://m3.material.io/components/progress-indicators/specs
+     Spec: 4dp track height, active with stop indicator, inactive track in surface-variant
+     ============================================================================ */
+  .md-progress {
+    position: sticky;
+    top: 64px;
+    top: calc(64px + env(safe-area-inset-top));
+    z-index: 3;
+    padding: 12px 0 16px;
+    background: var(--aus-page-bg);
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+  }
+
+  .md-progress[data-scrolled="true"] {
+    border-bottom-color: var(--aus-divider);
+  }
+
+  .md-progress__labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+    color: var(--aus-text-secondary);
+  }
+
+  .md-progress__label-lead {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.6875rem;
+  }
+
+  .md-progress__label-count {
+    font-family: "DM Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    color: var(--aus-teal);
+    font-weight: 500;
+  }
+
+  .md-progress__track {
+    position: relative;
+    height: 4px;
+    background: var(--aus-border);
+    border-radius: var(--md-sys-shape-corner-full);
+    overflow: hidden;
+  }
+
+  .md-progress__indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 0%;
+    background: var(--aus-status-green);
+    border-radius: var(--md-sys-shape-corner-full);
+    transition: width var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-emphasized);
+  }
+
+  /* Stop indicator — 4dp dot at the end of the active track */
+  .md-progress__stop {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translate(50%, -50%);
+    width: 4px;
+    height: 4px;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--aus-status-green);
+  }
+
+  /* ============================================================================
+     SCREEN 2 — QUESTIONS
+     Uses MD3 filled cards + outlined text fields
+     ============================================================================ */
+  .section-intro {
+    padding: 8px 0 20px;
+  }
+
+  .section-intro__title {
+    margin: 8px 0 8px;
+    color: var(--md-sys-color-on-surface);
+    letter-spacing: -0.01em;
+  }
+
+  .section-intro__sub {
+    margin: 0;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  /* ============================================================================
+     CARD — question container.
+     Dashboard language: pure white card on sage-grey page, 14px radius, no
+     outline. Focus-within adds a 3px teal left border (mirrors the NOTIFIED
+     state of dashboard queue items) to signal the active question.
+     ============================================================================ */
+  .md-card {
+    background: var(--aus-card-bg);
+    border-radius: var(--md-sys-shape-corner-large); /* 14px */
+    padding: 16px;
+    margin-bottom: 10px;
+    position: relative;
+    transition:
+      border-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+    border-left: 3px solid transparent;
+  }
+
+  .md-card:focus-within {
+    background: var(--aus-card-bg-notified);
+    border-left-color: var(--aus-teal);
+    padding-left: 13px; /* compensate 3px border for stable text position */
+  }
+
+  .question-card__header {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    align-items: flex-start;
+  }
+
+  .question-card__number {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--md-sys-shape-corner-small); /* 9px, dashboard position-badge shape */
+    background: var(--aus-badge-green);
+    color: var(--aus-teal);
+    font-family: "DM Mono", ui-monospace, monospace;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+
+  .question-card__text {
+    margin: 4px 0 0;
+    color: var(--aus-text-primary);
+    font-size: 1rem;
+    line-height: 1.45;
+    font-weight: 500; /* slightly heavier than before for dashboard feel */
+  }
+
+  /* Hint — inline suggestion under the question. Dashboard uses pale warm
+     backgrounds for this kind of informational tint; switch to inputBg. */
+  .question-card__hint {
+    margin: 10px 0 0;
+    padding: 9px 12px;
+    background: var(--aus-input-bg);
+    border-left: 3px solid var(--aus-status-orange);
+    border-radius: var(--md-sys-shape-corner-small);
+    color: var(--aus-text-secondary);
+  }
+
+  /* ============================================================================
+     MD3 COMPONENT — Text Field (Outlined, multiline)
+     Reference: https://m3.material.io/components/text-fields/specs
+     Spec: Outlined text field has 16dp horizontal padding, 8dp top padding in
+           multiline, 1dp border expanding to 2dp on focus, 4dp corner radius
+     ============================================================================ */
+  .md-text-field {
+    position: relative;
+    display: block;
+    margin-top: 16px;
+  }
+
+  .md-text-field__input {
+    display: block;
+    width: 100%;
+    min-height: 100px;
+    padding: 12px 14px;
+    background: var(--aus-input-bg);
+    color: var(--aus-text-primary);
+    border: 1.5px solid var(--aus-border);
+    border-radius: var(--md-sys-shape-corner-medium); /* 11px, dashboard input */
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-size: 0.9375rem; /* 15px, dashboard input */
+    line-height: 1.5;
+    resize: vertical;
+    transition:
+      border-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+  }
+
+  .md-text-field__input::placeholder {
+    color: var(--aus-text-secondary);
+    opacity: 0.75;
+  }
+
+  .md-text-field__input:hover {
+    border-color: color-mix(in srgb, var(--aus-teal) 30%, var(--aus-border));
+  }
+
+  .md-text-field__input:focus {
+    outline: none;
+    border-color: var(--aus-teal);
+    /* Border width unchanged (stays 1.5px) → no padding compensation needed */
+  }
+
+  .md-text-field__helper {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 14px 0;
+    color: var(--aus-text-secondary);
+  }
+
+  .md-text-field__counter {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ============================================================================
+     MD3 COMPONENT — Radio button + list-item (choice group)
+     Reference: https://m3.material.io/components/radio-button/specs
+                https://m3.material.io/components/lists/specs
+     Spec: 20dp target circle, 2dp outline, inner 10dp filled dot on selection,
+           40dp state-layer target, label-large for list items.
+     We render each choice as a full-width list row so the entire row is tappable
+     (which is the MD3 recommended pattern for lists with single-line leading
+     controls on mobile).
+     ============================================================================ */
+  .md-choice-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 12px;
+    border-radius: var(--md-sys-shape-corner-medium); /* 11px */
+    overflow: hidden;
+    background: var(--aus-input-bg);
+  }
+
+  .md-choice {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 48px;
+    padding: 10px 14px 10px 12px;
+    cursor: pointer;
+    transition:
+      background var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+    user-select: none;
+  }
+
+  /* Divider between choices */
+  .md-choice + .md-choice {
+    border-top: 1px solid var(--aus-divider);
+  }
+
+  /* State layer on the whole row */
+  .md-choice::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--aus-forest);
+    opacity: 0;
+    transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+    pointer-events: none;
+  }
+
+  .md-choice:hover::before { opacity: var(--md-sys-state-hover-opacity); }
+  .md-choice:active::before { opacity: var(--md-sys-state-pressed-opacity); }
+
+  /* Hide native input; we render the indicator ourselves for MD3 fidelity */
+  .md-choice__input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 1px; height: 1px;
+  }
+
+  /* Radio indicator — MD3 spec: 20dp outer, 2dp outline, 10dp inner on selection */
+  .md-choice__indicator {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--aus-text-secondary);
+    border-radius: var(--md-sys-shape-corner-full);
+    flex-shrink: 0;
+    transition:
+      border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  }
+
+  .md-choice__indicator::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--aus-teal);
+    transform: scale(0);
+    transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
+  }
+
+  /* Checkbox indicator — 18px rounded square, 2px outline, teal fill on check */
+  .md-choice__indicator--checkbox {
+    width: 18px;
+    height: 18px;
+    border-radius: var(--md-sys-shape-corner-extra-small);
+  }
+
+  .md-choice__indicator--checkbox::after {
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    background: var(--aus-teal);
+  }
+
+  /* When selected: outline teal + inner scales to 1 */
+  .md-choice__input:checked ~ .md-choice__indicator {
+    border-color: var(--aus-teal);
+  }
+
+  .md-choice__input:checked ~ .md-choice__indicator::after {
+    transform: scale(1);
+  }
+
+  /* Checkmark for checked checkbox — drawn via SVG mask on the ::after pseudo */
+  .md-choice__input:checked ~ .md-choice__indicator--checkbox::after {
+    background: var(--aus-teal);
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z' fill='white'/></svg>");
+            mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z' fill='white'/></svg>");
+    -webkit-mask-size: contain;
+            mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+            mask-position: center;
+  }
+
+  /* Focus ring on keyboard navigation */
+  .md-choice__input:focus-visible ~ .md-choice__indicator {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--aus-teal) 25%, transparent);
+  }
+
+  /* Label text */
+  .md-choice__label {
+    flex: 1;
+    color: var(--aus-text-primary);
+    line-height: 1.4;
+    font-size: 0.9375rem;
+  }
+
+  /* Selected row background (flat, dashboard notified-green) */
+  .md-choice:has(.md-choice__input:checked) {
+    background: var(--aus-card-bg-notified);
+  }
+
+  .md-choice:has(.md-choice__input:checked) .md-choice__label {
+    color: var(--aus-text-primary);
+    font-weight: 600;
+  }
+
+  /* ============================================================================
+     Sub-question pattern — when a card has multiple parts (a + b)
+     Small kicker label above each group; parts separated by MD3 divider
+     ============================================================================ */
+  .question-card__sub {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--md-sys-color-outline-variant);
+  }
+
+  .question-card__sub:first-of-type {
+    margin-top: 12px;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .question-card__sub-kicker {
+    display: block;
+    margin: 0 0 8px;
+    color: var(--aus-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.07em; /* dashboard "EN ATTENTE" / "VUS" label spacing */
+    font-weight: 600;
+    font-size: 0.6875rem; /* 11px, matches dashboard section labels */
+  }
+
+  .question-card__sub-prompt {
+    margin: 0 0 4px;
+    color: var(--aus-text-primary);
+    font-weight: 600;
+    font-size: 0.9375rem;
+  }
+
+  /* ============================================================================
+     Optional follow-up text field (for Q3's "tell me more" short input)
+     Single-line variant of the outlined text field
+     ============================================================================ */
+  .md-text-field--compact {
+    margin-top: 12px;
+  }
+
+  .md-text-field--compact .md-text-field__input {
+    min-height: 0;
+    height: 48px;
+    resize: none;
+  }
+
+  .md-text-field--compact .md-text-field__input:focus {
+    height: 48px; /* avoid resize jitter from border-width compensation */
+  }
+
+  /* Submit region */
+  .questions-submit {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px 0 16px;
+  }
+
+  /* ============================================================================
+     SCREEN 3 — GATE (invitation to continue with bonus questions)
+     Uses filled card with Display typography for emphasis
+     ============================================================================ */
+  .gate {
+    padding: 24px 0;
+  }
+
+  .gate-card {
+    padding: 32px 24px;
+    background: var(--aus-card-bg);
+    border-radius: var(--md-sys-shape-corner-extra-large); /* 18px, dashboard card */
+    text-align: center;
+  }
+
+  .gate-card__glyph {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+    background: var(--aus-card-bg-notified);
+    color: var(--aus-teal);
+    border-radius: var(--md-sys-shape-corner-full);
+    animation: gate-glyph-pulse 2.4s var(--md-sys-motion-easing-standard) infinite;
+  }
+
+  @keyframes gate-glyph-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+  }
+
+  .gate-card__glyph svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .gate-card__title {
+    margin: 0 0 12px;
+    color: var(--aus-text-primary);
+    letter-spacing: -0.02em;
+  }
+
+  .gate-card__body {
+    margin: 0 auto 16px;
+    max-width: 42ch;
+    color: var(--aus-text-secondary);
+  }
+
+  .gate-card__body strong {
+    color: var(--aus-text-primary);
+    font-weight: 600;
+  }
+
+  /* Stats badges inside gate — use the dashboard inputBg (soft warm fill) */
+  .gate-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    max-width: 320px;
+    margin: 24px auto;
+  }
+
+  .gate-stats__item {
+    padding: 14px 8px;
+    background: var(--aus-input-bg);
+    border-radius: var(--md-sys-shape-corner-medium);
+    text-align: center;
+  }
+
+  .gate-stats__value {
+    font-family: "DM Mono", ui-monospace, monospace;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    font-weight: 500;
+    color: var(--aus-teal);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .gate-stats__label {
+    margin-top: 2px;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  .gate-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  /* ============================================================================
+     SCREEN 4 — FINAL (thank-you after declining the gate)
+     ============================================================================ */
+  .final {
+    padding: 56px 0;
+    text-align: center;
+  }
+
+  .final__icon {
+    display: grid;
+    place-items: center;
+    width: 88px;
+    height: 88px;
+    margin: 0 auto 24px;
+    background: var(--aus-status-green);
+    color: #FFFFFF;
+    border-radius: var(--md-sys-shape-corner-full);
+    animation: final-pop var(--md-sys-motion-duration-long2) var(--md-sys-motion-easing-emphasized-decelerate);
+  }
+
+  @keyframes final-pop {
+    0%   { transform: scale(0); opacity: 0; }
+    60%  { transform: scale(1.08); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .final__icon svg {
+    width: 44px;
+    height: 44px;
+  }
+
+  .final__title {
+    margin: 0 0 16px;
+    color: var(--aus-text-primary);
+    letter-spacing: -0.02em;
+  }
+
+  .final__body {
+    margin: 0 auto;
+    max-width: 38ch;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  /* ============================================================================
+     Responsive adjustments — MD3 "medium" breakpoint is 600dp
+     ============================================================================ */
+  @media (min-width: 600px) {
+    .container { padding: 0 24px; }
+    .cover-hero { padding: 48px 0 32px; }
+    .md-card { padding: 20px 24px; }
+    .md-card:focus-within { padding-left: 21px; } /* 24 - 3px border */
+    .gate-card { padding: 48px 40px; }
+    .gate-actions {
+      flex-direction: row-reverse;
+      justify-content: center;
+    }
+    .gate-actions .md-button { width: auto; }
+  }
+
+  @media (min-width: 840px) {
+    .cover-title { font-size: 2.5rem; }
+    .question-card__text { font-size: 1.125rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================================
+     Top App Bar — persistent across screens
+     ============================================================================ -->
+<header class="md-top-app-bar" id="appBar">
+  <div class="md-top-app-bar__leading" aria-hidden="true">A</div>
+  <h1 class="md-top-app-bar__title md-title-large">AuSuivant</h1>
+</header>
+
+<main>
+
+  <!-- ========================================================================
+       SCREEN 1 — COVER (Variant 3 · L'architecte invisible)
+       ======================================================================== -->
+  <section class="screen" id="screen-cover" data-active="true" aria-labelledby="cover-title">
+    <div class="container">
+
+      <div class="cover-hero">
+        <span class="cover-badge md-label-medium">
+          <span class="cover-badge__icon" aria-hidden="true">★</span>
+          Pour les cabinets médicaux
+        </span>
+
+        <h2 id="cover-title" class="cover-title md-headline-large">
+          Le cabinet tourne <em>grâce à vous deux.</em>
+        </h2>
+
+        <p class="cover-lede md-body-large">
+          Le médecin soigne. L'assistante orchestre. Entre la consultation et l'accueil, il y a une file d'attente qui ne se voit sur aucun écran — sauf dans votre tête. Chaque jour. Sans que personne ne le remarque vraiment.
+        </p>
+      </div>
+
+      <div class="cover-stats" role="group" aria-label="Chiffres clés">
+        <div class="cover-stat">
+          <span class="cover-stat__value">85%</span>
+          <span class="cover-stat__label md-body-small">des médecins interrompus pendant la consultation</span>
+        </div>
+        <div class="cover-stat">
+          <span class="cover-stat__value">18×</span>
+          <span class="cover-stat__label md-body-small">« c'est encore long ? » par demi-journée</span>
+        </div>
+        <div class="cover-stat">
+          <span class="cover-stat__value">~80h</span>
+          <span class="cover-stat__label md-body-small">par an à expliquer le retard</span>
+        </div>
+        <div class="cover-stat">
+          <span class="cover-stat__value">49%</span>
+          <span class="cover-stat__label md-body-small">des cabinets sans secrétariat physique</span>
+        </div>
+      </div>
+      <p class="cover-stats-caption md-body-small">
+        Sources : DREES, Mutuelle du Médecin, Université de Montpellier
+      </p>
+
+      <div class="cover-intro-card">
+        <p class="cover-intro-card__label md-label-small">Ce que nous préparons</p>
+        <p class="cover-intro-card__name">AuSuivant</p>
+        <p class="cover-intro-card__body md-body-medium">
+          Un outil qui donne au patient sa position en temps réel sur son téléphone, permet à la salle d'attente de respirer, et vous rend les heures que vous passez — vous à dire « bientôt », vous à ne pas savoir à quelle heure vous sortirez ce soir.
+        </p>
+      </div>
+
+      <div class="cover-reframe">
+        <p class="cover-reframe__kicker md-label-small">Pourquoi nous vous écrivons</p>
+        <p class="cover-reframe__text md-body-medium">
+          Nous pourrions concevoir cet outil entre développeurs et designers. Ce serait une erreur. <strong>Ceux qui savent vraiment comment fonctionne un cabinet médical, ce sont celles et ceux qui le tiennent.</strong> Vos réponses vont directement façonner chaque écran, chaque bouton, chaque décision. Anonymes, mais décisives.
+        </p>
+      </div>
+
+      <div class="cover-cta">
+        <p class="cover-cta__prompt md-label-medium">Vous êtes&nbsp;:</p>
+        <div class="cover-role-picker" role="group" aria-label="Votre rôle dans le cabinet">
+          <button type="button" class="md-button md-button--filled md-button--block md-label-large" onclick="goToQuestions('secretary')">
+            Assistante médicale
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+            </svg>
+          </button>
+          <button type="button" class="md-button md-button--tonal md-button--block md-label-large" onclick="goToQuestions('doctor')">
+            Docteur
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+            </svg>
+          </button>
+        </div>
+        <p class="cover-cta__caption md-body-small" id="cover-caption">Questionnaire anonyme · ~5 min</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SCREEN 2 — QUESTIONS
+       ======================================================================== -->
+  <section class="screen" id="screen-questions" aria-labelledby="questions-title">
+
+    <!-- Linear progress (sticky, appears only on this screen) -->
+    <div class="md-progress" id="progressRail" hidden>
+      <div class="container">
+        <div class="md-progress__labels md-label-medium">
+          <span class="md-progress__label-lead">Progression</span>
+          <span class="md-progress__label-count" id="progressCount">0 / 8</span>
+        </div>
+        <div class="md-progress__track" role="progressbar" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0" aria-label="Progression du questionnaire">
+          <div class="md-progress__indicator" id="progressIndicator">
+            <span class="md-progress__stop" aria-hidden="true"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="section-intro">
+        <h2 id="questions-title" class="section-intro__title md-headline-medium">Votre journée, vos gestes</h2>
+        <p class="section-intro__sub md-body-medium">Répondez librement, en quelques mots ou en quelques phrases — ce qui vous semble juste.</p>
+      </div>
+
+      <form id="questionnaireForm" onsubmit="handleSubmit(event)" novalidate>
+
+        <!-- Q1 — MCQ: tools (multi-select) + gesture count (single-select) -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">1</div>
+            <p class="question-card__text">
+              Quand un patient entre dans le cabinet, comment l'enregistrez-vous ?
+            </p>
+          </div>
+
+          <div class="question-card__sub">
+            <span class="question-card__sub-kicker md-label-small">Partie A — plusieurs réponses possibles</span>
+            <p class="question-card__sub-prompt md-body-large">Quels outils utilisez-vous ?</p>
+            <div class="md-choice-group" role="group" aria-label="Outils utilisés pour enregistrer un patient">
+              <label class="md-choice">
+                <input type="checkbox" class="md-choice__input" name="q1_tools" value="paper" data-field data-group="q1" data-role="secretary">
+                <span class="md-choice__indicator md-choice__indicator--checkbox" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Une liste papier ou un agenda papier</span>
+              </label>
+              <label class="md-choice">
+                <input type="checkbox" class="md-choice__input" name="q1_tools" value="lgc" data-field data-group="q1" data-role="secretary">
+                <span class="md-choice__indicator md-choice__indicator--checkbox" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Un logiciel métier (Weda, Hellodoc, Médiclick…)</span>
+              </label>
+              <label class="md-choice">
+                <input type="checkbox" class="md-choice__input" name="q1_tools" value="doctolib" data-field data-group="q1" data-role="secretary">
+                <span class="md-choice__indicator md-choice__indicator--checkbox" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Doctolib</span>
+              </label>
+              <label class="md-choice">
+                <input type="checkbox" class="md-choice__input" name="q1_tools" value="office" data-field data-group="q1" data-role="secretary">
+                <span class="md-choice__indicator md-choice__indicator--checkbox" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Un tableur Excel ou un document Word</span>
+              </label>
+              <label class="md-choice">
+                <input type="checkbox" class="md-choice__input" name="q1_tools" value="memory" data-field data-group="q1" data-role="secretary">
+                <span class="md-choice__indicator md-choice__indicator--checkbox" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Juste ma mémoire / de tête</span>
+              </label>
+              <label class="md-choice">
+                <input type="checkbox" class="md-choice__input" name="q1_tools" value="other" data-field data-group="q1" data-role="secretary">
+                <span class="md-choice__indicator md-choice__indicator--checkbox" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Un outil interne au cabinet (autre)</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="question-card__sub">
+            <span class="question-card__sub-kicker md-label-small">Partie B — une seule réponse</span>
+            <p class="question-card__sub-prompt md-body-large">Combien de gestes en moyenne (clics, saisies) pour enregistrer une arrivée ?</p>
+            <div class="md-choice-group" role="radiogroup" aria-label="Nombre de gestes par enregistrement">
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q1_gestures" value="1-2" data-field data-group="q1" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">1 à 2 gestes</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q1_gestures" value="3-5" data-field data-group="q1" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">3 à 5 gestes</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q1_gestures" value="6-10" data-field data-group="q1" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">6 à 10 gestes</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q1_gestures" value="10+" data-field data-group="q1" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Plus de 10 gestes</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q1_gestures" value="unknown" data-field data-group="q1" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Je n'y ai jamais fait attention</span>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <!-- Q2 — MCQ: pick top 3 trust factors (multi-select, capped at 3) -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">2</div>
+            <p class="question-card__text">
+              Pour que vous fassiez confiance à une heure de passage affichée par l'outil — au point de la dire à voix haute à un patient — qu'est-ce qui compte le plus ?
+            </p>
+          </div>
+          <p class="question-card__hint md-body-small">
+            Choisissez les <strong>3 éléments</strong> qui comptent le plus pour vous.
+          </p>
+          <div class="md-choice-group" role="group" aria-label="Conditions de confiance dans l'heure affichée" data-max-checks="3">
+            <label class="md-choice">
+              <input type="checkbox" class="md-choice__input" name="q2_trust" value="monotonic" data-field data-group="q2" data-role="secretary">
+              <span class="md-choice__indicator md-choice__indicator--checkbox" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">L'heure ne doit jamais reculer (toujours avancer ou rester stable)</span>
+            </label>
+            <label class="md-choice">
+              <input type="checkbox" class="md-choice__input" name="q2_trust" value="margin-10" data-field data-group="q2" data-role="secretary">
+              <span class="md-choice__indicator md-choice__indicator--checkbox" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">L'écart réel vs annoncé doit être inférieur à 10 minutes</span>
+            </label>
+            <label class="md-choice">
+              <input type="checkbox" class="md-choice__input" name="q2_trust" value="why" data-field data-group="q2" data-role="secretary">
+              <span class="md-choice__indicator md-choice__indicator--checkbox" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">L'outil doit m'expliquer <em>pourquoi</em> il estime cette heure</span>
+            </label>
+            <label class="md-choice">
+              <input type="checkbox" class="md-choice__input" name="q2_trust" value="auto-adjust" data-field data-group="q2" data-role="secretary">
+              <span class="md-choice__indicator md-choice__indicator--checkbox" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">L'outil doit s'ajuster automatiquement si une urgence arrive</span>
+            </label>
+            <label class="md-choice">
+              <input type="checkbox" class="md-choice__input" name="q2_trust" value="manual-override" data-field data-group="q2" data-role="secretary">
+              <span class="md-choice__indicator md-choice__indicator--checkbox" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Je dois pouvoir corriger manuellement l'heure si je le juge nécessaire</span>
+            </label>
+          </div>
+        </article>
+
+        <!-- Q3 — MCQ: 5-point scale + optional follow-up -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">3</div>
+            <p class="question-card__text">
+              Imaginez qu'un patient scanne un QR code et s'enregistre tout seul sur son téléphone — sans passer par vous. Votre première réaction ?
+            </p>
+          </div>
+
+          <div class="md-choice-group" role="radiogroup" aria-label="Réaction face à l'auto-enregistrement patient">
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q3_reaction" value="relief-strong" data-field data-group="q3" data-role="secretary">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Gros soulagement — j'ai moins à gérer</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q3_reaction" value="relief-conditional" data-field data-group="q3" data-role="secretary">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Plutôt soulagement, mais j'aimerais voir qui s'est enregistré</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q3_reaction" value="neutral" data-field data-group="q3" data-role="secretary">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Indifférent — tant que ça marche</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q3_reaction" value="wariness" data-field data-group="q3" data-role="secretary">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Méfiance — les patients vont mal remplir</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q3_reaction" value="threat" data-field data-group="q3" data-role="secretary">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Gêne — c'est une partie de mon rôle qui disparaît</span>
+            </label>
+          </div>
+
+          <div class="md-text-field md-text-field--compact">
+            <label for="q3_why" class="sr-only">En une phrase, pourquoi ? (optionnel)</label>
+            <textarea id="q3_why" name="q3_why" class="md-text-field__input" placeholder="Optionnel : en une phrase, pourquoi ?" maxlength="200" data-field data-group="q3" data-role="secretary"></textarea>
+          </div>
+        </article>
+
+        <!-- Q4 — MCQ: "c'est encore long" frequency + feeling -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">4</div>
+            <p class="question-card__text">
+              « C'est encore long ? » — la question qui revient toute la journée.
+            </p>
+          </div>
+
+          <div class="question-card__sub">
+            <span class="question-card__sub-kicker md-label-small">Partie A — une seule réponse</span>
+            <p class="question-card__sub-prompt md-body-large">Combien de fois par demi-journée un patient vous pose cette question (ou une variante) ?</p>
+            <div class="md-choice-group" role="radiogroup" aria-label="Fréquence de la question « c'est encore long »">
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q4_frequency" value="0-5" data-field data-group="q4" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Moins de 5 fois</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q4_frequency" value="5-10" data-field data-group="q4" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">5 à 10 fois</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q4_frequency" value="10-20" data-field data-group="q4" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">10 à 20 fois</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q4_frequency" value="20-30" data-field data-group="q4" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">20 à 30 fois</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q4_frequency" value="30+" data-field data-group="q4" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Plus de 30 fois</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q4_frequency" value="never-counted" data-field data-group="q4" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Je n'ai jamais compté</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="question-card__sub">
+            <span class="question-card__sub-kicker md-label-small">Partie B — une seule réponse</span>
+            <p class="question-card__sub-prompt md-body-large">À la 10ᵉ fois dans la journée, qu'est-ce qui décrit le mieux ce que vous ressentez ?</p>
+            <div class="md-choice-group" role="radiogroup" aria-label="Ressenti après la 10e occurrence">
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q4_feeling" value="routine" data-field data-group="q4" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Rien de spécial, ça fait partie du métier</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q4_feeling" value="weariness" data-field data-group="q4" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">De la lassitude</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q4_feeling" value="irritation" data-field data-group="q4" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">De l'agacement que je garde pour moi</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q4_feeling" value="guilt" data-field data-group="q4" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">De la culpabilité — je me sens responsable du retard</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q4_feeling" value="exhaustion" data-field data-group="q4" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">De l'épuisement nerveux</span>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <!-- Q5 — MCQ: crash frequency + plan B -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">5</div>
+            <p class="question-card__text">
+              Quand vos outils informatiques tombent en panne.
+            </p>
+          </div>
+
+          <div class="question-card__sub">
+            <span class="question-card__sub-kicker md-label-small">Partie A — une seule réponse</span>
+            <p class="question-card__sub-prompt md-body-large">À quelle fréquence vos outils (Weda, Doctolib, internet, ordinateur) tombent-ils en panne pendant les heures d'ouverture ?</p>
+            <div class="md-choice-group" role="radiogroup" aria-label="Fréquence des pannes">
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q5_frequency" value="never" data-field data-group="q5" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Jamais, ou quasi jamais</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q5_frequency" value="few-per-year" data-field data-group="q5" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Quelques fois par an</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q5_frequency" value="few-per-month" data-field data-group="q5" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Une ou deux fois par mois</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q5_frequency" value="few-per-week" data-field data-group="q5" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Plusieurs fois par semaine</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q5_frequency" value="constant" data-field data-group="q5" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Ça arrive régulièrement, je ne compte plus</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="question-card__sub">
+            <span class="question-card__sub-kicker md-label-small">Partie B — plusieurs réponses possibles</span>
+            <p class="question-card__sub-prompt md-body-large">Quand ça plante, quel est votre plan B ?</p>
+            <div class="md-choice-group" role="group" aria-label="Plan B en cas de panne">
+              <label class="md-choice">
+                <input type="checkbox" class="md-choice__input" name="q5_planB" value="paper" data-field data-group="q5" data-role="secretary">
+                <span class="md-choice__indicator md-choice__indicator--checkbox" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Je prends une feuille de papier et je continue</span>
+              </label>
+              <label class="md-choice">
+                <input type="checkbox" class="md-choice__input" name="q5_planB" value="call-support" data-field data-group="q5" data-role="secretary">
+                <span class="md-choice__indicator md-choice__indicator--checkbox" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">J'appelle le support ou un collègue pour réparer</span>
+              </label>
+              <label class="md-choice">
+                <input type="checkbox" class="md-choice__input" name="q5_planB" value="wait" data-field data-group="q5" data-role="secretary">
+                <span class="md-choice__indicator md-choice__indicator--checkbox" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Je demande aux patients de patienter, je ne fais rien d'autre</span>
+              </label>
+              <label class="md-choice">
+                <input type="checkbox" class="md-choice__input" name="q5_planB" value="restart" data-field data-group="q5" data-role="secretary">
+                <span class="md-choice__indicator md-choice__indicator--checkbox" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Je redémarre et je recommence</span>
+              </label>
+              <label class="md-choice">
+                <input type="checkbox" class="md-choice__input" name="q5_planB" value="doctor-handles" data-field data-group="q5" data-role="secretary">
+                <span class="md-choice__indicator md-choice__indicator--checkbox" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Le médecin gère lui-même en attendant</span>
+              </label>
+              <label class="md-choice">
+                <input type="checkbox" class="md-choice__input" name="q5_planB" value="other" data-field data-group="q5" data-role="secretary">
+                <span class="md-choice__indicator md-choice__indicator--checkbox" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Autre</span>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <!-- Q6 -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">6</div>
+            <p class="question-card__text">
+              Un patient vous dit « je sors cinq minutes, prévenez-moi quand c'est mon tour ». Aujourd'hui, vous dites oui, non, ou ça dépend ? Et qu'est-ce qui vous ferait dire oui sans hésiter ?
+            </p>
+          </div>
+          <p class="question-card__hint md-body-small">
+            Si c'est « ça dépend » : de quoi ? Du patient, de l'heure, de l'ambiance en salle d'attente ?
+          </p>
+          <div class="md-text-field">
+            <label for="q6" class="sr-only">Réponse à la question 6</label>
+            <textarea id="q6" name="q6" class="md-text-field__input" placeholder="Aujourd'hui, je dirais… Ce qui me ferait dire oui sans hésiter, ce serait…" data-field data-group="q6" data-role="secretary"></textarea>
+          </div>
+        </article>
+
+        <!-- Q7 — MCQ: urgence handling (modify + announce) -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">7</div>
+            <p class="question-card__text">
+              Quand une urgence arrive — un enfant fiévreux, une douleur thoracique.
+            </p>
+          </div>
+
+          <div class="question-card__sub">
+            <span class="question-card__sub-kicker md-label-small">Partie A — une seule réponse</span>
+            <p class="question-card__sub-prompt md-body-large">Comment modifiez-vous la file aujourd'hui ?</p>
+            <div class="md-choice-group" role="radiogroup" aria-label="Modification de la file en cas d'urgence">
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q7_modify" value="rewrite-paper" data-field data-group="q7" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Je réécris la liste papier</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q7_modify" value="verbal-only" data-field data-group="q7" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Je le dis verbalement au médecin, sans rien changer au système</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q7_modify" value="software-reorder" data-field data-group="q7" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Je modifie l'ordre dans le logiciel</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q7_modify" value="signal-next" data-field data-group="q7" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Je ne change rien — je le signale quand le médecin appelle le suivant</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q7_modify" value="other" data-field data-group="q7" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Autre</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="question-card__sub">
+            <span class="question-card__sub-kicker md-label-small">Partie B — une seule réponse</span>
+            <p class="question-card__sub-prompt md-body-large">Et comment annoncez-vous aux autres patients qu'ils passent après ?</p>
+            <div class="md-choice-group" role="radiogroup" aria-label="Annonce aux autres patients">
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q7_announce" value="silent" data-field data-group="q7" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Je ne dis rien, ils comprennent en voyant la personne passer</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q7_announce" value="individual" data-field data-group="q7" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Je m'excuse individuellement auprès de chacun</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q7_announce" value="public" data-field data-group="q7" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">J'annonce à voix haute à toute la salle</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q7_announce" value="doctor-handles" data-field data-group="q7" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Je laisse le médecin gérer l'explication</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q7_announce" value="other" data-field data-group="q7" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Autre</span>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <!-- Q8 — MCQ: phone call volume + proportion -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">8</div>
+            <p class="question-card__text">
+              Les appels téléphoniques, sur une journée type.
+            </p>
+          </div>
+
+          <div class="question-card__sub">
+            <span class="question-card__sub-kicker md-label-small">Partie A — une seule réponse</span>
+            <p class="question-card__sub-prompt md-body-large">Combien d'appels recevez-vous sur une journée complète ?</p>
+            <div class="md-choice-group" role="radiogroup" aria-label="Volume d'appels par jour">
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q8_volume" value="0-20" data-field data-group="q8" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Moins de 20</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q8_volume" value="20-50" data-field data-group="q8" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">20 à 50</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q8_volume" value="50-100" data-field data-group="q8" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">50 à 100</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q8_volume" value="100+" data-field data-group="q8" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Plus de 100</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q8_volume" value="unknown" data-field data-group="q8" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Je ne sais pas vraiment</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="question-card__sub">
+            <span class="question-card__sub-kicker md-label-small">Partie B — une seule réponse</span>
+            <p class="question-card__sub-prompt md-body-large">Quelle proportion concerne « c'est encore long ? », « je suis en retard » ou « je ne pourrai pas venir » — plutôt que la prise de RDV ?</p>
+            <div class="md-choice-group" role="radiogroup" aria-label="Proportion d'appels liés à l'attente">
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q8_proportion" value="almost-none" data-field data-group="q8" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Presque aucun — les gens appellent pour prendre RDV</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q8_proportion" value="1-in-10" data-field data-group="q8" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Environ 1 sur 10</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q8_proportion" value="1-in-4" data-field data-group="q8" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Environ 1 sur 4</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q8_proportion" value="1-in-3" data-field data-group="q8" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Environ 1 sur 3</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q8_proportion" value="over-half" data-field data-group="q8" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Plus de la moitié</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="q8_proportion" value="never-paid-attention" data-field data-group="q8" data-role="secretary">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Je n'y ai jamais fait attention</span>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <div class="questions-submit">
+          <button type="submit" class="md-button md-button--filled md-button--block md-label-large" id="submitBtn">
+            Envoyer mes réponses
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SCREEN 2B — DOCTOR QUESTIONS (5 MCQs)
+       Shown only when the user selects "Docteur" on the cover.
+       ======================================================================== -->
+  <section class="screen" id="screen-questions-doctor" aria-labelledby="questions-doctor-title">
+
+    <div class="md-progress" id="progressRailDoctor" hidden>
+      <div class="container">
+        <div class="md-progress__labels md-label-medium">
+          <span class="md-progress__label-lead">Progression</span>
+          <span class="md-progress__label-count" id="progressCountDoctor">0 / 5</span>
+        </div>
+        <div class="md-progress__track" role="progressbar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0" aria-label="Progression du questionnaire">
+          <div class="md-progress__indicator" id="progressIndicatorDoctor">
+            <span class="md-progress__stop" aria-hidden="true"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="section-intro">
+        <h2 id="questions-doctor-title" class="section-intro__title md-headline-medium">Votre journée, vos consultations</h2>
+        <p class="section-intro__sub md-body-medium">Cinq questions rapides. Chaque réponse oriente une décision concrète du produit.</p>
+      </div>
+
+      <form id="questionnaireFormDoctor" onsubmit="handleSubmit(event)" novalidate>
+
+        <!-- DQ1 — What interrupts you most during a consultation? -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">1</div>
+            <p class="question-card__text">
+              Pendant une consultation, qu'est-ce qui vous interrompt le plus souvent ?
+            </p>
+          </div>
+
+          <div class="question-card__sub">
+            <span class="question-card__sub-kicker md-label-small">Une seule réponse</span>
+            <div class="md-choice-group" role="radiogroup" aria-label="Source principale d'interruption pendant une consultation">
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq1_interruption_main" value="phone" data-field data-group="dq1" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Les appels téléphoniques</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq1_interruption_main" value="secretary-queue" data-field data-group="dq1" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Mon assistante qui frappe pour la file d'attente</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq1_interruption_main" value="secretary-urgent" data-field data-group="dq1" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Mon assistante pour une urgence ou un imprévu</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq1_interruption_main" value="patient-walkin" data-field data-group="dq1" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Un patient qui entre à l'improviste</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq1_interruption_main" value="rarely" data-field data-group="dq1" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Je suis rarement interrompu(e)</span>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <!-- DQ2 — When should you learn about a new arrival? -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">2</div>
+            <p class="question-card__text">
+              Un nouveau patient arrive en salle d'attente pendant que vous consultez. À quel moment préférez-vous l'apprendre ?
+            </p>
+          </div>
+
+          <div class="question-card__sub">
+            <span class="question-card__sub-kicker md-label-small">Une seule réponse</span>
+            <div class="md-choice-group" role="radiogroup" aria-label="Moment de découverte d'une nouvelle arrivée">
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq2_notification_timing" value="immediately-sound" data-field data-group="dq2" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Immédiatement — un signal sonore ou visuel discret</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq2_notification_timing" value="between-patients" data-field data-group="dq2" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Entre deux patients, quand je reviens à mon écran</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq2_notification_timing" value="only-urgent" data-field data-group="dq2" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Uniquement si c'est une urgence</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq2_notification_timing" value="end-of-session" data-field data-group="dq2" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Pas pendant la matinée — à la pause ou en fin de journée</span>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <!-- DQ3 — Patient asks to leave briefly -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">3</div>
+            <p class="question-card__text">
+              Un patient vous dit qu'il doit s'absenter 15 minutes — un enfant à récupérer, une course urgente, déjeuner. Aujourd'hui, que se passe-t-il ?
+            </p>
+          </div>
+
+          <div class="question-card__sub">
+            <span class="question-card__sub-kicker md-label-small">Une seule réponse</span>
+            <div class="md-choice-group" role="radiogroup" aria-label="Gestion d'une absence courte d'un patient">
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq3_absence_policy" value="allow-keep-place" data-field data-group="dq3" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Je l'autorise, il garde sa place</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq3_absence_policy" value="allow-lose-if-missed" data-field data-group="dq3" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Je l'autorise, mais s'il n'est pas là quand je l'appelle, il passe en dernier</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq3_absence_policy" value="refuse" data-field data-group="dq3" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Je refuse — il doit rester en salle d'attente</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq3_absence_policy" value="depends" data-field data-group="dq3" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Ça dépend du patient et du contexte</span>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <!-- DQ4 — Most useful glance-number -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">4</div>
+            <p class="question-card__text">
+              Si vous pouviez consulter <em>un seul chiffre</em> entre deux patients, lequel vous serait le plus utile ?
+            </p>
+          </div>
+
+          <div class="question-card__sub">
+            <span class="question-card__sub-kicker md-label-small">Une seule réponse</span>
+            <div class="md-choice-group" role="radiogroup" aria-label="Chiffre le plus utile en pause">
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq4_priority_stat" value="end-of-day-time" data-field data-group="dq4" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">L'heure à laquelle je vais terminer</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq4_priority_stat" value="patients-waiting" data-field data-group="dq4" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Le nombre de patients encore en attente</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq4_priority_stat" value="longest-wait" data-field data-group="dq4" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">L'attente du patient qui patiente depuis le plus longtemps</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq4_priority_stat" value="patients-seen" data-field data-group="dq4" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Le nombre de patients déjà vus aujourd'hui</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq4_priority_stat" value="avg-consult-time" data-field data-group="dq4" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Ma durée moyenne de consultation aujourd'hui</span>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <!-- DQ5 — WTP for predictable end-of-day -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">5</div>
+            <p class="question-card__text">
+              Combien seriez-vous prêt(e) à payer chaque mois pour sortir du cabinet à une heure prévisible, tous les soirs ?
+            </p>
+          </div>
+
+          <div class="question-card__sub">
+            <span class="question-card__sub-kicker md-label-small">Une seule réponse</span>
+            <div class="md-choice-group" role="radiogroup" aria-label="Volonté de payer pour une fin de journée prévisible">
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq5_willingness_to_pay" value="nothing" data-field data-group="dq5" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Rien — je ne paierais pas pour ça</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq5_willingness_to_pay" value="up-to-19" data-field data-group="dq5" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Jusqu'à 19 €/mois</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq5_willingness_to_pay" value="up-to-39" data-field data-group="dq5" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Jusqu'à 39 €/mois</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq5_willingness_to_pay" value="up-to-69" data-field data-group="dq5" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Jusqu'à 69 €/mois</span>
+              </label>
+              <label class="md-choice">
+                <input type="radio" class="md-choice__input" name="dq5_willingness_to_pay" value="more-than-69" data-field data-group="dq5" data-role="doctor">
+                <span class="md-choice__indicator" aria-hidden="true"></span>
+                <span class="md-choice__label md-body-large">Plus de 69 €/mois</span>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <div class="questions-submit">
+          <button type="submit" class="md-button md-button--filled md-button--block md-label-large">
+            Envoyer mes réponses
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SCREEN 3 — GATE (invitation to continue)
+       ======================================================================== -->
+  <section class="screen" id="screen-gate" aria-labelledby="gate-title">
+    <div class="container">
+      <div class="gate">
+        <div class="gate-card">
+          <div class="gate-card__glyph" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-6h2v6zm0-8h-2V7h2v4z"/>
+            </svg>
+          </div>
+
+          <h2 id="gate-title" class="gate-card__title md-headline-medium">Merci. Vraiment.</h2>
+
+          <p class="gate-card__body md-body-large">
+            Vos 8 premières réponses sont enregistrées et elles vont directement nourrir le design de l'outil.
+          </p>
+
+          <div class="gate-stats">
+            <div class="gate-stats__item">
+              <div class="gate-stats__value">+12</div>
+              <div class="gate-stats__label md-body-small">questions bonus</div>
+            </div>
+            <div class="gate-stats__item">
+              <div class="gate-stats__value">~8 min</div>
+              <div class="gate-stats__label md-body-small">de plus</div>
+            </div>
+          </div>
+
+          <p class="gate-card__body md-body-medium">
+            Si vous avez encore un peu de temps, nous avons <strong>12 questions complémentaires</strong> qui nous aideraient à affiner certains détails d'ergonomie précis : notifications sonores, gestion des absences, partage de la file avec un aidant…
+          </p>
+          <p class="gate-card__body md-body-medium">
+            <em>Aucune obligation.</em> Vos réponses actuelles ont déjà énormément de valeur.
+          </p>
+
+          <div class="gate-actions">
+            <button type="button" class="md-button md-button--filled md-button--block md-label-large" onclick="acceptMore()">
+              Oui, je continue
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+              </svg>
+            </button>
+            <button type="button" class="md-button md-button--text md-button--block md-label-large" onclick="declineMore()">
+              Non merci, c'est suffisant
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SCREEN 4 — FINAL (after declining the gate)
+       ======================================================================== -->
+  <section class="screen" id="screen-final" aria-labelledby="final-title">
+    <div class="container">
+      <div class="final">
+        <div class="final__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+        </div>
+        <h2 id="final-title" class="final__title md-headline-large">C'est envoyé.</h2>
+        <p class="final__body md-body-large">
+          Merci pour le temps que vous venez de nous accorder. Vos réponses font directement la différence dans la façon dont nous allons dessiner chaque écran de l'outil.
+        </p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // =============================================================================
+  // Backend configuration — Google Apps Script Web App endpoint
+  // =============================================================================
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwclvFLUIq3y5Kf-503WGNP3TgLEXNfUfRu48fBbZmtEsKGhM8jL8OBFDQHnYRJANXv/exec';
+  const SURVEY_VERSION = 'v1';
+  // Stable session ID for this browser session — lets us correlate the gate
+  // submission with any later bonus-question submission in the same sitting.
+  const SESSION_ID = 'q2_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+
+  // =============================================================================
+  // State management — vanilla JS, no framework required
+  // =============================================================================
+  const screens = {
+    cover: document.getElementById('screen-cover'),
+    questions: document.getElementById('screen-questions'),                // secretary
+    'questions-doctor': document.getElementById('screen-questions-doctor'), // doctor
+    gate: document.getElementById('screen-gate'),
+    final: document.getElementById('screen-final'),
+  };
+
+  const appBar = document.getElementById('appBar');
+
+  // Each role has its own sticky progress rail (mounted in its own question screen)
+  const progressRails = {
+    secretary: {
+      root:      document.getElementById('progressRail'),
+      indicator: document.getElementById('progressIndicator'),
+      count:     document.getElementById('progressCount'),
+    },
+    doctor: {
+      root:      document.getElementById('progressRailDoctor'),
+      indicator: document.getElementById('progressIndicatorDoctor'),
+      count:     document.getElementById('progressCountDoctor'),
+    },
+  };
+
+  // Selected role is set when the respondent picks "Assistante médicale" or "Docteur"
+  // on the cover. Null until picked.
+  let selectedRole = null;
+
+  // Card counts per role — used by the progress bar denominator
+  const TOTAL_CARDS = { secretary: 8, doctor: 5 };
+
+  /* ---------------------------------------------------------------------------
+     Field collection (filtered by role)
+     Each [data-field] element has a [data-role] attribute set to 'secretary'
+     or 'doctor'. This lets progress, serialization, and the Q2 cap ignore
+     fields that belong to the other role's screen.
+     --------------------------------------------------------------------------- */
+  const allFields = Array.from(document.querySelectorAll('[data-field]'));
+
+  function fieldsForRole(role) {
+    return allFields.filter(f => f.getAttribute('data-role') === role);
+  }
+
+  function activeFields() {
+    return selectedRole ? fieldsForRole(selectedRole) : [];
+  }
+
+  /* Helper: is this field "answered"?
+     - textarea / text input: value has non-whitespace content
+     - radio / checkbox: input is checked */
+  function isAnswered(field) {
+    const type = field.type;
+    if (type === 'radio' || type === 'checkbox') return field.checked;
+    return field.value.trim().length > 0;
+  }
+
+  /* Helper: set of group IDs (among the active role) that have at least one
+     answered field */
+  function answeredGroups() {
+    const groups = new Set();
+    activeFields().forEach(f => {
+      if (isAnswered(f)) {
+        const g = f.getAttribute('data-group');
+        if (g) groups.add(g);
+      }
+    });
+    return groups;
+  }
+
+  function showScreen(name) {
+    Object.entries(screens).forEach(([key, el]) => {
+      if (!el) return;
+      el.setAttribute('data-active', key === name ? 'true' : 'false');
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // A11y: move focus to the screen heading
+    const target = screens[name];
+    const heading = target && target.querySelector('h2');
+    if (heading) {
+      heading.setAttribute('tabindex', '-1');
+      setTimeout(() => heading.focus({ preventScroll: true }), 300);
+    }
+  }
+
+  function goToQuestions(role) {
+    if (role !== 'secretary' && role !== 'doctor') {
+      console.warn('[AuSuivant] goToQuestions called with invalid role:', role);
+      return;
+    }
+    selectedRole = role;
+    const screenName = role === 'doctor' ? 'questions-doctor' : 'questions';
+    showScreen(screenName);
+    const rail = progressRails[role];
+    if (rail && rail.root) rail.root.hidden = false;
+    updateProgress();
+  }
+
+  function updateProgress() {
+    if (!selectedRole) return;
+    const rail = progressRails[selectedRole];
+    if (!rail || !rail.root) return;
+
+    const total  = TOTAL_CARDS[selectedRole];
+    const filled = answeredGroups().size;
+    const pct    = (filled / total) * 100;
+
+    rail.indicator.style.width = pct + '%';
+    rail.count.textContent = filled + ' / ' + total;
+    const pb = rail.root.querySelector('[role="progressbar"]');
+    if (pb) {
+      pb.setAttribute('aria-valuemax', String(total));
+      pb.setAttribute('aria-valuenow', String(filled));
+    }
+  }
+
+  /* Listen to both input (textarea / text field) and change (radio / checkbox)
+     across all fields — the handler uses activeFields() internally so it only
+     affects the currently-selected role's progress rail. */
+  allFields.forEach(f => {
+    f.addEventListener('input', updateProgress);
+    f.addEventListener('change', updateProgress);
+  });
+
+  /* ---------------------------------------------------------------------------
+     Q2 — Max-check enforcement (secretary form only)
+     The checkbox group with data-max-checks prevents a 4th selection while
+     keeping the UX forgiving: the user can deselect and re-select freely.
+     --------------------------------------------------------------------------- */
+  document.querySelectorAll('.md-choice-group[data-max-checks]').forEach(group => {
+    const max = parseInt(group.getAttribute('data-max-checks'), 10);
+    const inputs = Array.from(group.querySelectorAll('input[type="checkbox"]'));
+    group.addEventListener('change', (e) => {
+      const checked = inputs.filter(i => i.checked);
+      if (checked.length > max && e.target && e.target.checked) {
+        e.target.checked = false;
+        // Visual feedback: briefly highlight the hint
+        const card = group.closest('.md-card');
+        const hint = card && card.querySelector('.question-card__hint');
+        if (hint) {
+          hint.style.transition = 'color 0.3s, background 0.3s';
+          hint.style.color = 'var(--md-sys-color-error)';
+          hint.style.background = 'var(--md-sys-color-error-container)';
+          setTimeout(() => {
+            hint.style.color = '';
+            hint.style.background = '';
+          }, 1200);
+        }
+        updateProgress();
+      }
+    });
+  });
+
+  /* ---------------------------------------------------------------------------
+     Serialize the active role's form into a clean payload
+     - Checkboxes with the same name are collected into an array
+     - Radios yield a single value
+     - Text fields yield their trimmed value
+     Only fields for the currently-selected role are included, so a doctor
+     submission never carries empty secretary fields and vice versa.
+     --------------------------------------------------------------------------- */
+  function serializeForm() {
+    const payload = {};
+    activeFields().forEach(f => {
+      const name = f.name;
+      if (!name) return;
+      if (f.type === 'checkbox') {
+        if (!payload[name]) payload[name] = [];
+        if (f.checked) payload[name].push(f.value);
+      } else if (f.type === 'radio') {
+        if (f.checked) payload[name] = f.value;
+      } else {
+        const v = f.value.trim();
+        if (v.length > 0) payload[name] = v;
+      }
+    });
+    return payload;
+  }
+
+  /* ---------------------------------------------------------------------------
+     Backend submission
+     Apps Script does not send CORS headers, so we POST as text/plain with
+     mode:'no-cors'. The server still reads the body via e.postData.contents
+     and parses it as JSON. Tradeoff: we can't read the response body, but
+     the write succeeds as long as the POST completes.
+     --------------------------------------------------------------------------- */
+  function buildPayload(completionStatus, acceptedBonus) {
+    return {
+      survey_version: SURVEY_VERSION,
+      session_id: SESSION_ID,
+      role: selectedRole || '',
+      submitted_at: new Date().toISOString(),
+      locale: navigator.language || '',
+      user_agent: navigator.userAgent || '',
+      completion_status: completionStatus,
+      accepted_bonus: acceptedBonus,
+      answers: serializeForm()
+    };
+  }
+
+  async function submitToSheets(payload) {
+    return fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    // Disable the submit button to prevent double-posts while the request is in flight.
+    // We query the submit button inside the active form so the right one gets disabled
+    // when both forms live in the DOM simultaneously.
+    const activeForm = e.target;
+    const submitBtn = activeForm.querySelector('button[type="submit"]');
+    const originalHTML = submitBtn ? submitBtn.innerHTML : '';
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Envoi…';
+    }
+
+    // The secretary path has 8 core questions with an optional bonus (Q9–Q20);
+    // the doctor path has 5 questions with no bonus.
+    // Completion status captures that distinction for downstream analysis.
+    const status = selectedRole === 'doctor' ? 'completed_doctor_5' : 'completed_core_8';
+    const payload = buildPayload(status, false);
+
+    try {
+      await submitToSheets(payload);
+      console.log('[AuSuivant] Payload submitted', payload);
+      // Secretaries get the gate (bonus invitation); doctors jump straight to final.
+      if (selectedRole === 'doctor') {
+        showScreen('final');
+      } else {
+        showScreen('gate');
+      }
+    } catch (err) {
+      console.error('[AuSuivant] Submit failed:', err);
+      alert("L'envoi a échoué. Vérifiez votre connexion et réessayez.");
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalHTML;
+      }
+    }
+  }
+
+  async function acceptMore() {
+    // Record the bonus-acceptance now, in case the respondent abandons
+    // before completing the extended questions. The bonus-complete record
+    // will share the same SESSION_ID so rows can be correlated downstream.
+    try {
+      await submitToSheets(buildPayload('completed_core_8_accepted_bonus', true));
+    } catch (err) {
+      console.warn('[AuSuivant] Could not record bonus acceptance (non-blocking):', err);
+    }
+    // TODO: reveal or navigate to the 12 bonus questions (Q9–Q20) here.
+    alert("La suite du questionnaire s'ouvrira ici (12 questions complémentaires).");
+  }
+
+  function declineMore() {
+    showScreen('final');
+  }
+
+  // Top app bar + progress rail scroll-elevation (MD3 behaviour)
+  let scrollTicking = false;
+  window.addEventListener('scroll', () => {
+    if (scrollTicking) return;
+    window.requestAnimationFrame(() => {
+      const scrolled = window.scrollY > 4;
+      appBar.setAttribute('data-scrolled', scrolled ? 'true' : 'false');
+      progressRail.setAttribute('data-scrolled', scrolled ? 'true' : 'false');
+      scrollTicking = false;
+    });
+    scrollTicking = true;
+  }, { passive: true });
+</script>
+
+</body>
+</html>
