@@ -1290,6 +1290,130 @@
     color: var(--md-sys-color-on-surface-variant);
   }
 
+  /* Email opt-in form */
+  .final__email-section {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--aus-border-subtle);
+  }
+
+  .final__email-heading {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--aus-text-primary);
+    margin: 0 0 1rem;
+    text-align: left;
+  }
+
+  .final__email-label {
+    display: block;
+    color: var(--aus-text-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+    text-align: left;
+  }
+
+  .final__email-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--aus-border-default);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--aus-text-primary);
+    background: var(--aus-bg-primary);
+    margin-bottom: 0.5rem;
+    transition: border-color 200ms, box-shadow 200ms;
+    box-sizing: border-box;
+  }
+
+  .final__email-input:focus {
+    outline: none;
+    border-color: var(--aus-primary);
+    box-shadow: 0 0 0 3px rgba(0, 102, 102, 0.1);
+  }
+
+  .final__email-input::placeholder {
+    color: var(--aus-text-tertiary);
+  }
+
+  .final__email-note {
+    font-size: 0.75rem;
+    color: var(--aus-text-tertiary);
+    text-align: left;
+    margin-bottom: 1rem;
+  }
+
+  .final__email-button {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--aus-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 200ms;
+  }
+
+  .final__email-button:hover {
+    background: var(--aus-primary-dark, #004d4d);
+  }
+
+  .final__email-button:active {
+    background: var(--aus-primary-darker, #003333);
+  }
+
+  .final__email-button:disabled {
+    background: var(--aus-border-subtle);
+    cursor: not-allowed;
+    color: var(--aus-text-tertiary);
+  }
+
+  .final__email-success {
+    display: none;
+    color: var(--aus-status-green);
+    font-size: 0.875rem;
+    margin-top: 0.75rem;
+    animation: slideDown 300ms ease-out;
+  }
+
+  .final__email-success.show {
+    display: block;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .final__skip-email {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+  }
+
+  .final__skip-email button {
+    background: none;
+    border: none;
+    color: var(--aus-primary);
+    cursor: pointer;
+    text-decoration: underline;
+    font: inherit;
+    padding: 0;
+  }
+
+  .final__skip-email button:hover {
+    color: var(--aus-primary-dark, #004d4d);
+  }
+
   /* ============================================================================
      Responsive adjustments — MD3 "medium" breakpoint is 600dp
      ============================================================================ */
@@ -2243,6 +2367,30 @@
         <p class="final__body md-body-large">
           Merci pour le temps que vous venez de nous accorder. Vos réponses font directement la différence dans la façon dont nous allons dessiner chaque écran de l'outil.
         </p>
+
+        <!-- Email opt-in section -->
+        <div class="final__email-section">
+          <label class="final__email-heading">Soyez parmi les premiers à tester l'outil</label>
+          <div>
+            <input
+              type="email"
+              id="final-email-input"
+              class="final__email-input"
+              placeholder="votre@email.com"
+              aria-label="Adresse email"
+            />
+            <p class="final__email-note">Nous vous préviendrons dès que l'outil sera prêt.</p>
+            <button id="final-email-submit" class="final__email-button" type="button">
+              M'avertir
+            </button>
+            <div id="final-email-success" class="final__email-success">
+              ✓ Merci ! Nous vous contacterons bientôt.
+            </div>
+            <div class="final__skip-email">
+              <button id="final-skip-email" type="button">Ignorer</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -2525,6 +2673,83 @@
 
   function declineMore() {
     showScreen('final');
+  }
+
+  // Email opt-in functionality
+  const emailInput = document.getElementById('final-email-input');
+  const emailSubmitBtn = document.getElementById('final-email-submit');
+  const emailSuccessMsg = document.getElementById('final-email-success');
+  const skipEmailBtn = document.getElementById('final-skip-email');
+
+  if (emailSubmitBtn) {
+    emailSubmitBtn.addEventListener('click', async () => {
+      const email = emailInput.value.trim();
+      
+      // Simple email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email || !emailRegex.test(email)) {
+        alert('Veuillez entrer une adresse email valide.');
+        emailInput.focus();
+        return;
+      }
+
+      // Disable button and show loading state
+      emailSubmitBtn.disabled = true;
+      emailSubmitBtn.textContent = 'Envoi…';
+
+      // Build email payload
+      const emailPayload = {
+        survey_version: SURVEY_VERSION,
+        session_id: SESSION_ID,
+        role: selectedRole || '',
+        email: email,
+        timestamp: new Date().toISOString(),
+        user_agent: navigator.userAgent || ''
+      };
+
+      try {
+        // Send email to Apps Script
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(emailPayload)
+        });
+
+        // Show success message
+        emailSuccessMsg.classList.add('show');
+        emailInput.disabled = true;
+        emailSubmitBtn.style.display = 'none';
+        skipEmailBtn.style.display = 'none';
+        
+        console.log('[AuSuivant] Email captured:', email);
+      } catch (err) {
+        console.error('[AuSuivant] Email submission error:', err);
+        alert('Une erreur s\'est produite. Veuillez réessayer.');
+        emailSubmitBtn.disabled = false;
+        emailSubmitBtn.textContent = 'M\'avertir';
+      }
+    });
+
+    // Allow skipping email entry
+    if (skipEmailBtn) {
+      skipEmailBtn.addEventListener('click', () => {
+        emailInput.value = '';
+        emailInput.disabled = true;
+        emailSubmitBtn.style.display = 'none';
+        skipEmailBtn.style.display = 'none';
+        console.log('[AuSuivant] User skipped email opt-in');
+      });
+    }
+
+    // Allow Enter key to submit email
+    if (emailInput) {
+      emailInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          emailSubmitBtn.click();
+        }
+      });
+    }
   }
 
   // Top app bar + progress rail scroll-elevation (MD3 behaviour)
