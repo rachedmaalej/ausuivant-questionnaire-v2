@@ -2360,6 +2360,433 @@
   </section>
 
   <!-- ========================================================================
+       SCREEN 3B — BONUS QUESTIONS (12 questions complémentaires, Q9–Q20)
+       Shown only when the secretary accepts the gate invitation.
+       ======================================================================== -->
+  <section class="screen" id="screen-bonus" aria-labelledby="bonus-title">
+
+    <div class="md-progress" id="progressRailBonus" hidden>
+      <div class="container">
+        <div class="md-progress__labels md-label-medium">
+          <span class="md-progress__label-lead">Questions bonus</span>
+          <span class="md-progress__label-count" id="progressCountBonus">0 / 12</span>
+        </div>
+        <div class="md-progress__track" role="progressbar" aria-valuemin="0" aria-valuemax="12" aria-valuenow="0" aria-label="Progression des questions bonus">
+          <div class="md-progress__indicator" id="progressIndicatorBonus">
+            <span class="md-progress__stop" aria-hidden="true"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="section-intro">
+        <h2 id="bonus-title" class="section-intro__title md-headline-medium">12 questions complémentaires</h2>
+        <p class="section-intro__sub md-body-medium">Notifications, absences, partage de la file — chaque réponse affine un détail d'ergonomie précis.</p>
+      </div>
+
+      <form id="bonusQuestionsForm" onsubmit="handleBonusSubmit(event)" novalidate>
+
+        <!-- Q9 — Sound notification type -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">9</div>
+            <p class="question-card__text">
+              Quand un nouveau patient arrive, quel type d'alerte vous convient le mieux ?
+            </p>
+          </div>
+          <div class="md-choice-group" role="radiogroup" aria-label="Type d'alerte à l'arrivée d'un patient">
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q9_alert_type" value="sound-only" data-field data-group="q9" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Un signal sonore discret (bip ou mélodie)</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q9_alert_type" value="visual-only" data-field data-group="q9" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Un signal visuel uniquement (pop-up ou badge à l'écran)</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q9_alert_type" value="both" data-field data-group="q9" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Les deux : son et visuel</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q9_alert_type" value="none" data-field data-group="q9" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Aucun — je surveille moi-même l'écran</span>
+            </label>
+          </div>
+        </article>
+
+        <!-- Q10 — When should sound play -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">10</div>
+            <p class="question-card__text">
+              Si vous optez pour un signal sonore, à quel moment doit-il se déclencher ?
+            </p>
+          </div>
+          <div class="md-choice-group" role="radiogroup" aria-label="Déclenchement du signal sonore">
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q10_sound_trigger" value="every-arrival" data-field data-group="q10" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">À chaque nouvelle arrivée sans exception</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q10_sound_trigger" value="when-queue-empty" data-field data-group="q10" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Uniquement quand la salle était vide</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q10_sound_trigger" value="urgent-only" data-field data-group="q10" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Uniquement en cas d'urgence déclarée</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q10_sound_trigger" value="never" data-field data-group="q10" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Jamais — je préfère uniquement le visuel</span>
+            </label>
+          </div>
+        </article>
+
+        <!-- Q11 — Distinct sound for urgency -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">11</div>
+            <p class="question-card__text">
+              Faut-il un signal distinct entre une arrivée normale et une urgence ?
+            </p>
+          </div>
+          <div class="md-choice-group" role="radiogroup" aria-label="Signal distinct pour les urgences">
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q11_urgency_signal" value="distinct-sound" data-field data-group="q11" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Oui — un son différent pour les urgences</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q11_urgency_signal" value="urgent-only-signal" data-field data-group="q11" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Oui — seules les urgences sont signalées soniquement</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q11_urgency_signal" value="same-signal" data-field data-group="q11" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Non — un seul signal pour toutes les situations</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q11_urgency_signal" value="no-sound" data-field data-group="q11" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Pas de son quelle que soit la situation — visuel uniquement</span>
+            </label>
+          </div>
+        </article>
+
+        <!-- Q12 — Alert during phone call -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">12</div>
+            <p class="question-card__text">
+              Pendant un appel téléphonique, comment souhaitez-vous être alertée d'une nouvelle arrivée ?
+            </p>
+          </div>
+          <div class="md-choice-group" role="radiogroup" aria-label="Alerte pendant un appel téléphonique">
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q12_call_alert" value="visual-popup" data-field data-group="q12" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Une pop-up visuelle discrète sur mon écran</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q12_call_alert" value="subtle-sound" data-field data-group="q12" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Un léger signal sonore (je peux l'entendre tout en parlant)</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q12_call_alert" value="both" data-field data-group="q12" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Les deux : son + visuel</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q12_call_alert" value="nothing" data-field data-group="q12" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Rien — j'attends de raccrocher pour vérifier</span>
+            </label>
+          </div>
+        </article>
+
+        <!-- Q13 — Absence grace period -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">13</div>
+            <p class="question-card__text">
+              Quand un patient active « Je m'absente », combien de temps doit-il conserver sa place dans la file ?
+            </p>
+          </div>
+          <div class="md-choice-group" role="radiogroup" aria-label="Délai de grâce pour un patient absent">
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q13_absence_grace" value="5min" data-field data-group="q13" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">5 minutes maximum</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q13_absence_grace" value="10min" data-field data-group="q13" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">10 minutes maximum</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q13_absence_grace" value="15min" data-field data-group="q13" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">15 minutes maximum</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q13_absence_grace" value="unlimited" data-field data-group="q13" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Jusqu'à son retour, sans limite de temps</span>
+            </label>
+          </div>
+        </article>
+
+        <!-- Q14 — Notification on patient return -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">14</div>
+            <p class="question-card__text">
+              Souhaitez-vous être prévenue quand un patient absent revient en salle d'attente ?
+            </p>
+          </div>
+          <div class="md-choice-group" role="radiogroup" aria-label="Notification au retour du patient absent">
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q14_return_notif" value="immediately" data-field data-group="q14" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Oui, immédiatement dès son retour</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q14_return_notif" value="near-turn" data-field data-group="q14" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Oui, uniquement si son tour approche (moins de 2 patients devant lui)</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q14_return_notif" value="no" data-field data-group="q14" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Non — c'est lui qui doit se signaler à l'accueil</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q14_return_notif" value="depends" data-field data-group="q14" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Ça dépend — je voudrais décider au cas par cas</span>
+            </label>
+          </div>
+        </article>
+
+        <!-- Q15 — Who removes absent patient from queue -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">15</div>
+            <p class="question-card__text">
+              Qui décide qu'un patient absent perd définitivement sa place dans la file ?
+            </p>
+          </div>
+          <div class="md-choice-group" role="radiogroup" aria-label="Décision de retrait de la file pour un patient absent">
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q15_absence_removal" value="me-manual" data-field data-group="q15" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Moi, manuellement depuis l'accueil</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q15_absence_removal" value="auto-timeout" data-field data-group="q15" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">L'outil automatiquement, après expiration du délai de grâce</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q15_absence_removal" value="doctor-call" data-field data-group="q15" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Le médecin, au moment d'appeler le patient suivant</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q15_absence_removal" value="never" data-field data-group="q15" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Personne — les patients absents gardent toujours leur place</span>
+            </label>
+          </div>
+        </article>
+
+        <!-- Q16 — Reminder to absent patient before their turn -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">16</div>
+            <p class="question-card__text">
+              L'outil devrait-il envoyer un rappel automatique au patient absent avant que son tour arrive ?
+            </p>
+          </div>
+          <div class="md-choice-group" role="radiogroup" aria-label="Rappel automatique avant le tour du patient absent">
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q16_absence_reminder" value="10min-before" data-field data-group="q16" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Oui, 10 minutes avant son tour estimé</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q16_absence_reminder" value="5min-before" data-field data-group="q16" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Oui, 5 minutes avant</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q16_absence_reminder" value="no" data-field data-group="q16" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Non — la responsabilité appartient au patient</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q16_absence_reminder" value="confirm-return" data-field data-group="q16" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Oui, et le patient doit confirmer son retour (sinon il perd sa place)</span>
+            </label>
+          </div>
+        </article>
+
+        <!-- Q17 — Helper visibility of queue -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">17</div>
+            <p class="question-card__text">
+              Un aidant (parent ou proche) accompagne le patient et attend à l'extérieur. Devrait-il pouvoir suivre l'avancement de la file sur son téléphone ?
+            </p>
+          </div>
+          <div class="md-choice-group" role="radiogroup" aria-label="Visibilité de la file pour un aidant">
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q17_helper_visibility" value="full-info" data-field data-group="q17" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Oui, avec exactement les mêmes informations que le patient</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q17_helper_visibility" value="partial-info" data-field data-group="q17" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Oui, mais uniquement l'attente estimée, sans position exacte</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q17_helper_visibility" value="no" data-field data-group="q17" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Non — seul le patient devrait y avoir accès</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q17_helper_visibility" value="depends" data-field data-group="q17" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Ça dépend du contexte et de la préférence du patient</span>
+            </label>
+          </div>
+        </article>
+
+        <!-- Q18 — Helper check-in on behalf of patient -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">18</div>
+            <p class="question-card__text">
+              Un aidant devrait-il pouvoir enregistrer le patient à sa place, sans passer par l'accueil ?
+            </p>
+          </div>
+          <div class="md-choice-group" role="radiogroup" aria-label="Enregistrement par un aidant">
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q18_helper_checkin" value="yes-always" data-field data-group="q18" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Oui, toujours — s'il dispose du QR code ou du lien du patient</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q18_helper_checkin" value="yes-confirm" data-field data-group="q18" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Oui, mais je dois valider l'enregistrement depuis mon poste</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q18_helper_checkin" value="no-desk-only" data-field data-group="q18" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Non — seul l'accueil peut enregistrer un patient</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q18_helper_checkin" value="no-patient-only" data-field data-group="q18" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Non — seul le patient lui-même peut s'enregistrer</span>
+            </label>
+          </div>
+        </article>
+
+        <!-- Q19 — Multiple-device notifications -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">19</div>
+            <p class="question-card__text">
+              Si le patient et son aidant sont dans deux endroits différents, les deux devraient-ils recevoir les notifications de la file ?
+            </p>
+          </div>
+          <div class="md-choice-group" role="radiogroup" aria-label="Notifications sur plusieurs appareils">
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q19_multi_device" value="both-simultaneous" data-field data-group="q19" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Oui, les deux en simultané</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q19_multi_device" value="patient-only" data-field data-group="q19" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Uniquement le patient reçoit les notifications</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q19_multi_device" value="one-device" data-field data-group="q19" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Un seul appareil à la fois — au choix du patient</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q19_multi_device" value="patient-preference" data-field data-group="q19" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Ça dépend de ce que le patient préfère — il devrait pouvoir choisir</span>
+            </label>
+          </div>
+        </article>
+
+        <!-- Q20 — Most useful info for helper waiting outside -->
+        <article class="md-card">
+          <div class="question-card__header">
+            <div class="question-card__number md-label-medium" aria-hidden="true">20</div>
+            <p class="question-card__text">
+              Quelle est l'information la plus utile à afficher à un aidant qui attend à l'extérieur du cabinet ?
+            </p>
+          </div>
+          <div class="md-choice-group" role="radiogroup" aria-label="Information prioritaire pour un aidant extérieur">
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q20_helper_info" value="estimated-time" data-field data-group="q20" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">L'heure estimée à laquelle le patient sera appelé</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q20_helper_info" value="queue-position" data-field data-group="q20" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">La position dans la file (ex. : 3e sur 7)</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q20_helper_info" value="soon-notification" data-field data-group="q20" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Une notification « bientôt votre tour » 5 à 10 minutes avant l'appel</span>
+            </label>
+            <label class="md-choice">
+              <input type="radio" class="md-choice__input" name="q20_helper_info" value="nothing" data-field data-group="q20" data-role="bonus">
+              <span class="md-choice__indicator" aria-hidden="true"></span>
+              <span class="md-choice__label md-body-large">Rien — c'est le rôle de l'accueil d'informer l'aidant si besoin</span>
+            </label>
+          </div>
+        </article>
+
+        <div class="questions-submit">
+          <button type="submit" class="md-button md-button--filled md-button--block md-label-large">
+            Terminer et envoyer
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================
        SCREEN 4 — FINAL (after declining the gate)
        ======================================================================== -->
   <section class="screen" id="screen-final" aria-labelledby="final-title">
@@ -2422,6 +2849,7 @@
     questions: document.getElementById('screen-questions'),                // secretary
     'questions-doctor': document.getElementById('screen-questions-doctor'), // doctor
     gate: document.getElementById('screen-gate'),
+    bonus: document.getElementById('screen-bonus'),                         // secretary bonus Q9–Q20
     final: document.getElementById('screen-final'),
   };
 
@@ -2439,6 +2867,11 @@
       indicator: document.getElementById('progressIndicatorDoctor'),
       count:     document.getElementById('progressCountDoctor'),
     },
+    bonus: {
+      root:      document.getElementById('progressRailBonus'),
+      indicator: document.getElementById('progressIndicatorBonus'),
+      count:     document.getElementById('progressCountBonus'),
+    },
   };
 
   // Selected role is set when the respondent picks "Assistante médicale" or "Docteur"
@@ -2446,7 +2879,7 @@
   let selectedRole = null;
 
   // Card counts per role — used by the progress bar denominator
-  const TOTAL_CARDS = { secretary: 8, doctor: 5 };
+  const TOTAL_CARDS = { secretary: 8, doctor: 5, bonus: 12 };
 
   /* ---------------------------------------------------------------------------
      Field collection (filtered by role)
@@ -2666,7 +3099,7 @@
   }
 
   async function acceptMore() {
-    // Record the bonus-acceptance now, in case the respondent abandons
+    // Record the bonus-acceptance event now, in case the respondent abandons
     // before completing the extended questions. The bonus-complete record
     // will share the same SESSION_ID so rows can be correlated downstream.
     try {
@@ -2674,12 +3107,41 @@
     } catch (err) {
       console.warn('[AuSuivant] Could not record bonus acceptance (non-blocking):', err);
     }
-    // TODO: reveal or navigate to the 12 bonus questions (Q9–Q20) here.
-    alert("La suite du questionnaire s'ouvrira ici (12 questions complémentaires).");
+    // Switch tracking role to 'bonus' and navigate to the 12 bonus questions.
+    selectedRole = 'bonus';
+    showScreen('bonus');
+    const rail = progressRails['bonus'];
+    if (rail && rail.root) rail.root.hidden = false;
+    updateProgress();
   }
 
   function declineMore() {
     showScreen('final');
+  }
+
+  async function handleBonusSubmit(e) {
+    e.preventDefault();
+    const activeForm = e.target;
+    const submitBtn = activeForm.querySelector('button[type="submit"]');
+    const originalHTML = submitBtn ? submitBtn.innerHTML : '';
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Envoi…';
+    }
+    const payload = buildPayload('completed_bonus_12', true);
+    try {
+      await submitToSheets(payload);
+      console.log('[AuSuivant] Bonus payload submitted', payload);
+      showScreen('final');
+    } catch (err) {
+      console.error('[AuSuivant] Bonus submit failed:', err);
+      alert("L'envoi a échoué. Vérifiez votre connexion et réessayez.");
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalHTML;
+      }
+    }
   }
 
   // Email opt-in functionality
@@ -2766,7 +3228,13 @@
     window.requestAnimationFrame(() => {
       const scrolled = window.scrollY > 4;
       appBar.setAttribute('data-scrolled', scrolled ? 'true' : 'false');
-      progressRail.setAttribute('data-scrolled', scrolled ? 'true' : 'false');
+      // Update every progress rail that is currently in the DOM (secretary,
+      // doctor, and bonus). The old code used an implicit global `progressRail`
+      // (the element whose id happened to match the variable name), which meant
+      // the doctor and bonus rails never received the scrolled attribute.
+      Object.values(progressRails).forEach(r => {
+        if (r && r.root) r.root.setAttribute('data-scrolled', scrolled ? 'true' : 'false');
+      });
       scrollTicking = false;
     });
     scrollTicking = true;
